@@ -1,19 +1,36 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useState} from 'react';
 import './TodoAdd.scss'
-import Context from '../../context'
+import TodoContext from '../../contextTodo'
+
+// обьявляем кастомный хук для всех инпутов,
+// хук не уменьшил на много код,
+// но я попробовал сам сделать хук + одно действие контролириуем в одном месте
+function useInputValue(defaultValue) {
+    const [value, setValue] = useState(defaultValue);
+    const onChange = event => {
+        setValue(event.target.value);
+    }
+
+    const clear = () => setValue('');
+
+    return {
+        bind: {value, onChange},
+        value,
+        clear
+    }
+}
 
 
 function TodoAdd() {
-    const { dispatch } = useContext(Context);
-    const { openChangeForm } = useContext(Context);
-    const { openAddForm } = useContext(Context);
-    const { visibleForm } = useContext(Context);
+    const { dispatch } = useContext(TodoContext);
+    const { openChangeForm } = useContext(TodoContext);
+    const { openAddForm } = useContext(TodoContext);
+    const { visibleForm } = useContext(TodoContext);
 
-    const [todoTitle, setTodoTitle] = useState('');
-    const [projectTitle, setProjectTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [priority, setPriority] = useState('default');
-
+    const title = useInputValue('');
+    const project = useInputValue('');
+    const description = useInputValue('');
+    const priority = useInputValue('default');
 
     function toggleAddForm() {
         openAddForm(!visibleForm);
@@ -21,10 +38,10 @@ function TodoAdd() {
     }
 
     function clearForm() {
-        setTodoTitle('');
-        setProjectTitle('');
-        setDescription('');
-        setPriority('default');
+        title.clear();
+        project.clear();
+        description.clear();
+        priority.clear();
     }
 
     function showButton() {
@@ -48,31 +65,20 @@ function TodoAdd() {
                 <h2>Додати нове завдання</h2>
                 <form className="todo-add">
                     <label className="pure-material-textfield-outlined">
-                        <input placeholder=" "
-                            value={todoTitle}
-                            onChange={event => setTodoTitle(event.target.value)}
-                        />
+                        <input placeholder=" " value={title.bind.value} onChange={title.bind.onChange}/>
                         <span>Назва завдання</span>
                     </label>
                     <label className="pure-material-textfield-outlined">
-                        <input placeholder=" "
-                            value={projectTitle}
-                            onChange={event => setProjectTitle(event.target.value)}
-                        />
+                        <input placeholder=" " value={project.bind.value} onChange={project.bind.onChange} />
                         <span>Назва проекту</span>
                     </label>
 
                     <label className="pure-material-textfield-outlined">
-                        <textarea placeholder=" "
-                            value={description}
-                            onChange={event => setDescription(event.target.value)}
-                        />
+                        <textarea placeholder=" " value={description.bind.value} onChange={description.bind.onChange} />
                         <span>Опис проекту</span>
                     </label>
                     <div className="select">
-                        <select className="select-text"
-                            value={priority}
-                            onChange={event => setPriority(event.target.value)}>
+                        <select className="select-text" value={priority.bind.value} onChange={priority.bind.onChange} >
                             <option value="default" disabled>Оберіть пріорітет</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -86,10 +92,10 @@ function TodoAdd() {
                                 dispatch({
                                     type: 'add',
                                     payload: {
-                                        title: todoTitle,
-                                        project: projectTitle,
-                                        description: description,
-                                        priority: priority
+                                        title: title.value,
+                                        project: project.value,
+                                        description: description.value,
+                                        priority: priority.value
                                     }
                                 });
 

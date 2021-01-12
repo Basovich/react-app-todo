@@ -5,17 +5,17 @@ import PropTypes from 'prop-types';
 
 
 function TodoList (props) {
+    const todos = props.todos;
  
     return (
             <ul className="todo-list">
-                {props.todos.map((todo, index) => {
+                {todos.map((todo, index) => {
                     return (
                         <TodoItem 
                             key={index} 
                             todo={todo}
                             index={index}
                         />
-                        
                     )               
                 })}
             </ul>
@@ -23,7 +23,7 @@ function TodoList (props) {
 }
 
 TodoList.propTypes = {
-    todos: PropTypes.arrayOf(PropTypes.object).isRequired    
+    todos: PropTypes.arrayOf(PropTypes.object).isRequired
 }
 
 

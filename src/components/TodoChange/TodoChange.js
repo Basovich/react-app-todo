@@ -1,12 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './TodoChange.scss'
-import Context from '../../context'
+import TodoContext from '../../contextTodo'
 import PropTypes from 'prop-types';
 
 
 function TodoChange(props) {
-    const { openChangeForm } = useContext(Context);
-    const { dispatch } = useContext(Context);
+    const { openChangeForm } = useContext(TodoContext);
+    const { dispatch } = useContext(TodoContext);
 
     
     const [title, setTitle] = useState(props.todo.title);

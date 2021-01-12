@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import './TodoItem.scss'
 import PropTypes from 'prop-types';
-import Context from '../../context'
+import TodoContext from '../../contextTodo'
 
 
 function TodoItem({ todo, index }) {
-    const { dispatch } = useContext(Context);
-    const { openChangeForm } = useContext(Context);
-    const { openAddForm } = useContext(Context);
+    const { dispatch } = useContext(TodoContext);
+    const { openChangeForm } = useContext(TodoContext);
+    const { openAddForm } = useContext(TodoContext);
 
     const text = {
         isHidden: 'Показати опис',

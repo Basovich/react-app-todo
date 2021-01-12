@@ -3,10 +3,9 @@ import './TodoFilter.scss'
 
 
 function TodoFilter(props) {
-    console.log(props.todos);
-
     let projects = [];
-    props.todos.forEach(todo => {
+    const todos = props.todos;
+    todos.forEach(todo => {
         if (todo.project.indexOf() === -1) {
             projects.push(todo.project);
         }     
@@ -32,7 +31,6 @@ function TodoFilter(props) {
                             )
                         })}
                     </select>
-                    <span className="select-bar"></span>
                 </div>
             </div>
         </>
