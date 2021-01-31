@@ -30,7 +30,7 @@ function reducer(state, action) {
             return newState
           
         case 'remove':          
-            return state.filter( (todo, i) => action.payload !== i )
+            return state.filter( todo => action.payload !== todo.id )
 
         default: 
             return state

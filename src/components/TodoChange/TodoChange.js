@@ -1,25 +1,44 @@
 import React, { useState, useContext, useEffect } from 'react';
 import './TodoChange.scss'
 import TodoContext from '../../contextTodo'
-import PropTypes from 'prop-types';
+import {validate} from "../TodoAdd/validate";
 
 
-function TodoChange(props) {
-    const { openChangeForm } = useContext(TodoContext);
-    const { dispatch } = useContext(TodoContext);
+function TodoChange() {
+    const { changeForm, openChangeForm, dispatch } = useContext(TodoContext);
 
-    
-    const [title, setTitle] = useState(props.todo.title);
-    const [project, setProject] = useState(props.todo.project);
-    const [description, setDescription] = useState(props.todo.description);
-    const [priority, setPriority] = useState(props.todo.priority);
+    const [title, setTitle] = useState(changeForm.title);
+    const [project, setProject] = useState(changeForm.project);
+    const [description, setDescription] = useState(changeForm.description);
+    const [priority, setPriority] = useState(changeForm.priority);
 
     useEffect(() => {
-        setTitle(props.todo.title);
-        setProject(props.todo.project);
-        setDescription(props.todo.description);
-        setPriority(props.todo.priority);
-    }, [props]);
+        setTitle(changeForm.title);
+        setProject(changeForm.project);
+        setDescription(changeForm.description);
+        setPriority(changeForm.priority);
+    }, [changeForm]);
+
+
+    function dispatchState() {
+        dispatch({
+            type: 'change',
+            payload: {
+                title,
+                project,
+                description,
+                priority,
+                id: changeForm.id
+            }
+        });
+    }
+
+    const validator = validate(title, project, description, priority, false);
+
+    function changeTask() {
+        if ( !validator() ) return;
+        dispatchState();
+    }
 
     return (       
         <>
@@ -27,7 +46,8 @@ function TodoChange(props) {
             <form className="todo-change-wrap">
                 <label className="pure-material-textfield-outlined">
                     <input placeholder=" " 
-                        value={title} 
+                        value={title}
+                        name="title"
                         onChange={event => setTitle(event.currentTarget.value)} 
                     />
                     <span>Назва завдання</span>
@@ -35,6 +55,7 @@ function TodoChange(props) {
                 <label className="pure-material-textfield-outlined">
                     <input placeholder=" "
                         value={project}
+                        name="project"
                         onChange={event => setProject(event.target.value)}
                     />
                     <span>Назва проекту</span>
@@ -43,6 +64,7 @@ function TodoChange(props) {
                 <label className="pure-material-textfield-outlined">
                     <textarea placeholder=" " 
                         value={description}
+                        name="descriptionTextarea"
                         onChange={event => setDescription(event.target.value)}
                     />
                     <span>Опис проекту</span>
@@ -50,6 +72,7 @@ function TodoChange(props) {
                 <div className="select">
                     <select className="select-text"
                         value={priority}
+                        name="priority"
                         onChange={event => setPriority(event.target.value)}>
                         <option value="default" disabled>Оберіть пріорітет</option>
                         <option value="1">1</option>
@@ -60,18 +83,7 @@ function TodoChange(props) {
                 <div className="todo__button-group todo__button-group--right mt-20">
                     <button className="todo__button todo__button-change"
                         type="button"
-                        onClick={() => {
-                            dispatch({
-                                type: 'change',
-                                payload: {
-                                    title,
-                                    project,
-                                    description,
-                                    priority,
-                                    id: props.todo.id                                    
-                                }
-                            });
-                        }}>
+                        onClick={changeTask}>
                         Зберегти
                     </button>
                     <button className="todo__button todo__button--error"
@@ -86,10 +98,5 @@ function TodoChange(props) {
         </>           
     )
 }
-
-TodoChange.propTypes = {
-    todo: PropTypes.object.isRequired  
-}
-
 
 export default TodoChange

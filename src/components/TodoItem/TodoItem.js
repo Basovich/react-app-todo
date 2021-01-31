@@ -1,13 +1,10 @@
 import React, { useContext } from 'react';
 import './TodoItem.scss'
-import PropTypes from 'prop-types';
 import TodoContext from '../../contextTodo'
 
 
-function TodoItem({ todo, index }) {
-    const { dispatch } = useContext(TodoContext);
-    const { openChangeForm } = useContext(TodoContext);
-    const { openAddForm } = useContext(TodoContext);
+function TodoItem({ todo, id }) {
+    const { dispatch, openChangeForm, openAddForm } = useContext(TodoContext);
 
     const text = {
         isHidden: 'Показати опис',
@@ -44,7 +41,7 @@ function TodoItem({ todo, index }) {
                     type="button"
                     onClick={ () => {
                         openAddForm(false);
-                        openChangeForm(index);
+                        openChangeForm(id);
                     }}>
                     Змінити завдання
                 </button>
@@ -61,7 +58,7 @@ function TodoItem({ todo, index }) {
                         openChangeForm(false);
                         dispatch({
                             type: 'remove',
-                            payload: index
+                            payload: id
                         })
                     }}>
                     Видалити завдання
@@ -69,11 +66,6 @@ function TodoItem({ todo, index }) {
             </div>
         </li>
     )
-}
-
-TodoItem.propTypes = {
-    todo: PropTypes.object.isRequired,
-    index: PropTypes.number.isRequired
 }
 
 export default TodoItem

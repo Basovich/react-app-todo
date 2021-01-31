@@ -1,20 +1,26 @@
 import React, {useContext, useState} from 'react';
 import './TodoAdd.scss'
 import TodoContext from '../../contextTodo'
+import {validate} from "./validate";
 
 // обьявляем кастомный хук для всех инпутов,
 // хук не уменьшил на много код,
 // но я попробовал сам сделать хук + одно действие контролириуем в одном месте
 function useInputValue(defaultValue) {
     const [value, setValue] = useState(defaultValue);
+
     const onChange = event => {
         setValue(event.target.value);
     }
 
-    const clear = () => setValue('');
+    const onClick = event => {
+        event.target.classList.remove('input-error');
+    }
+
+    const clear = (val) => setValue(val);
 
     return {
-        bind: {value, onChange},
+        bind: {value, onChange, onClick},
         value,
         clear
     }
@@ -22,10 +28,7 @@ function useInputValue(defaultValue) {
 
 
 function TodoAdd() {
-    const { dispatch } = useContext(TodoContext);
-    const { openChangeForm } = useContext(TodoContext);
-    const { openAddForm } = useContext(TodoContext);
-    const { visibleForm } = useContext(TodoContext);
+    const { dispatch, openChangeForm, openAddForm , visibleForm} = useContext(TodoContext);
 
     const title = useInputValue('');
     const project = useInputValue('');
@@ -38,10 +41,30 @@ function TodoAdd() {
     }
 
     function clearForm() {
-        title.clear();
-        project.clear();
-        description.clear();
-        priority.clear();
+        title.clear('');
+        project.clear('');
+        description.clear('');
+        priority.clear('default');
+    }
+
+    function dispatchState() {
+        dispatch({
+            type: 'add',
+            payload: {
+                title: title.value,
+                project: project.value,
+                description: description.value,
+                priority: priority.value
+            }
+        });
+    }
+
+    const validator = validate(title, project, description, priority, true);
+
+    function addTask() {
+        if ( !validator() ) return;
+        dispatchState();
+        clearForm();
     }
 
     function showButton() {
@@ -65,20 +88,44 @@ function TodoAdd() {
                 <h2>Додати нове завдання</h2>
                 <form className="todo-add">
                     <label className="pure-material-textfield-outlined">
-                        <input placeholder=" " value={title.bind.value} onChange={title.bind.onChange}/>
+                        <input
+                            placeholder=" "
+                            name="title"
+                            value={title.bind.value}
+                            onChange={title.bind.onChange}
+                            onClick={title.bind.onClick}
+                        />
                         <span>Назва завдання</span>
                     </label>
                     <label className="pure-material-textfield-outlined">
-                        <input placeholder=" " value={project.bind.value} onChange={project.bind.onChange} />
+                        <input
+                            placeholder=" "
+                            name="project"
+                            value={project.bind.value}
+                            onChange={project.bind.onChange}
+                            onClick={title.bind.onClick}
+                        />
                         <span>Назва проекту</span>
                     </label>
 
                     <label className="pure-material-textfield-outlined">
-                        <textarea placeholder=" " value={description.bind.value} onChange={description.bind.onChange} />
+                        <textarea
+                            placeholder=" "
+                            name="descriptionTextarea"
+                            value={description.bind.value}
+                            onChange={description.bind.onChange}
+                            onClick={title.bind.onClick}
+                        />
                         <span>Опис проекту</span>
                     </label>
                     <div className="select">
-                        <select className="select-text" value={priority.bind.value} onChange={priority.bind.onChange} >
+                        <select
+                            className="select-text"
+                            name="priority"
+                            value={priority.bind.value}
+                            onChange={priority.bind.onChange}
+                            onClick={title.bind.onClick}
+                        >
                             <option value="default" disabled>Оберіть пріорітет</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -88,19 +135,7 @@ function TodoAdd() {
                     <div className="todo__button-group todo__button-group--right mt-20">
                         <button className="todo__button todo__button-change"
                             type="button"
-                            onClick={() => {
-                                dispatch({
-                                    type: 'add',
-                                    payload: {
-                                        title: title.value,
-                                        project: project.value,
-                                        description: description.value,
-                                        priority: priority.value
-                                    }
-                                });
-
-                                clearForm();
-                            }}>
+                            onClick={addTask}>
                             Зберегти
                     </button>
                         <button className="todo__button todo__button--error"

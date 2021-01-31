@@ -1,12 +1,16 @@
 .todo-add {
     list-style: none;
     padding: 2rem;
-    margin: 0;
+    margin: 20px 0 0 0;
     border: 2px solid #cfcdcd;
     border-radius: 4px;    
     overflow-y: auto;
-    margin-top: 20px;
 }
+
+.input-error {
+    border-color: #f3213d !important;
+}
+
 
 .mt-20 {
     margin-top: 20px;

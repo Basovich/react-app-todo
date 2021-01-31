@@ -1,27 +1,50 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import './TodoFilter.scss'
+import TodoContext from "../../contextTodo";
 
 
-function TodoFilter(props) {
+function TodoFilter() {
+    let {filterPriority, setNewFilterPriority, state, filterProject, setNewFilterProject} = useContext(TodoContext);
+    const [checked, setChecked] = useState(filterPriority);
+    const [project, setProject] = useState(filterProject);
+
     let projects = [];
-    const todos = props.todos;
-    todos.forEach(todo => {
+    state.forEach(todo => {
         if (todo.project.indexOf() === -1) {
             projects.push(todo.project);
         }     
     });
+
+    function setFilterPriority(bool) {
+        setNewFilterPriority(bool)
+        setChecked(bool);
+    }
+
+    function setFilterProject(bool) {
+        setNewFilterProject(bool)
+        setProject(bool);
+    }
+
 
     return (
         <>
             <h2 className="todo-filter__title">Фільтр:</h2>
             <div className="todo-filter">        
                 <label className="pure-material-checkbox">
-                    <input type="checkbox" />
+                    <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={event => setFilterPriority(event.target.checked)}
+                    />
                     <span>по пріорітету</span>
                 </label>
                 <div className="select">
-                    <select className="select-text" defaultValue={'default'}>
-                        <option value="default" disabled>Всі проекти</option>
+                    <select
+                        className="select-text"
+                        value={project}
+                        onChange={event => setFilterProject(event.target.value)}
+                    >
+                        <option value='default'>Всі проекти</option>
                         {projects.map( (project, index) => {
                             return (
                                 <option key={index} 

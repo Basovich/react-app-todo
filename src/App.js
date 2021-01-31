@@ -2,7 +2,7 @@ import React, {useState, useEffect, useReducer} from 'react';
 import TodoList from './components/TodoList/TodoList';
 import TodoAdd from './components/TodoAdd/TodoAdd';
 import TodoChange from './components/TodoChange/TodoChange';
-// import TodoFilter from './components/TodoFilter/TodoFilter';
+import TodoFilter from './components/TodoFilter/TodoFilter';
 import TodoContext from './contextTodo';
 import {reducer} from './reducer';
 
@@ -11,15 +11,26 @@ function App() {
 	const [state, dispatch] = useReducer(reducer, data);
 
 	const [changeForm, setChangeForm] = useState(false);
-
-	function openChangeForm(index) {
-		index === false ? setChangeForm(false) : setChangeForm(state[index]);
+	function openChangeForm(id) {
+		// sometimes 0 comes, so need to check for false
+		id === false
+			? setChangeForm(false)
+			: setChangeForm(state[state.findIndex(item => item.id === id)]);
 	}
 
 	const [visibleForm, setVisibleForm] = useState(false);
-
 	function openAddForm(visibleForm) {
 		setVisibleForm(visibleForm);
+	}
+
+	const [filterPriority, setFilterPriority] = useState(false);
+	function setNewFilterPriority(bool) {
+		setFilterPriority(bool);
+	}
+
+	const [filterProject, setFilterProject] = useState('default');
+	function setNewFilterProject(project) {
+		setFilterProject(project);
 	}
 
 	useEffect(() => {
@@ -33,12 +44,25 @@ function App() {
 	}, [state]);
 
 	return (
-		<TodoContext.Provider value={{dispatch, openChangeForm, openAddForm, visibleForm}}>
+		<TodoContext.Provider value={
+			{
+				state,
+				dispatch,
+				changeForm,
+				openChangeForm,
+				openAddForm,
+				visibleForm,
+				filterPriority,
+				setNewFilterPriority,
+				filterProject,
+				setNewFilterProject,
+			}
+		}>
 			<div className='wrapper'>
 				<h1>Перелік завдань</h1>
-				<TodoList todos={state}/>
-				{/*<TodoFilter todos={state} />  */}
-				{changeForm ? <TodoChange todo={changeForm}/> : null}
+				<TodoList />
+				<TodoFilter />
+				{changeForm ? <TodoChange /> : null}
 				<TodoAdd/>
 			</div>
 		</TodoContext.Provider>
